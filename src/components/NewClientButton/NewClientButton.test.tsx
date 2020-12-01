@@ -115,12 +115,13 @@ test('should be 9 Inputs', () => {
 test('register user function should properly set constants', async () => {
 
     const registerUserSpy = jest.spyOn(React, 'useState'); 
-    const form = wrapper.find(Form).at(0);
-    const children = form.render().children().children();
-    console.log(children);
-    form.simulate('submit', { target: { children } }); 
+    const form = wrapper.find(Input).at(0);
+    for (let input of form){
+        form.simulate('submit', input); 
+        expect(registerUserSpy).toBeCalled; //hoping simulate click triggers this
+
+    }
     //wrapper.find(Form).simulate('submit');
-    expect(registerUserSpy).toBeCalled; //hoping simulate click triggers this
 })
 
 

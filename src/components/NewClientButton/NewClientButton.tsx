@@ -137,9 +137,9 @@ export const NewClientButton: React.FC<IProps> = (props:IProps) => {
    *
    * this function calls setAccountType which takes in the event element and sets it to accountType.
    */
-  function changeForm (event: ChangeEvent<HTMLInputElement>) {  
+  const changeForm = (event: ChangeEvent<HTMLInputElement>) =>
     setAccountType(event.target.value);
-  }
+
   return (
     <>
       <Button onClick={toggle} className="create-account-button">
