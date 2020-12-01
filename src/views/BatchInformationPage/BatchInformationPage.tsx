@@ -1,8 +1,7 @@
-import Axios from 'axios';
 import React, { useState } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
-import { Container, DropdownItem, Row, Spinner } from 'reactstrap';
+import { Container, DropdownItem, Spinner } from 'reactstrap';
 import { setBatchState } from '../../actions/BatchCardActions';
 import { IBasicBatchInfo } from '../../components/BatchCard/BatchCard';
 import { BatchInformation } from '../../components/BatchInformation/BatchInformation';
@@ -40,16 +39,17 @@ interface IProps extends RouteComponentProps<IBatchId>, IBasicBatchInfo {
     }],
 }
 
+export let getBatchData:(arg0:string) => {};
+
+let givenTrainer:string;
+
 const BatchInformationPage: React.FC<IProps> = (props: IProps) => {
 
     const passedInId = props.match.params.batchId;
-    console.log(passedInId); //this returns the passed in id
 
-    let givenTrainer:string;
     if(props.batches[0].employeeAssignments != null)
     {
-        givenTrainer = props.batches[0].employeeAssignments[0].employee.firstName + " " +
-        props.batches[0].employeeAssignments[0].employee.lastName;
+        givenTrainer = `${props.batches[0].employeeAssignments[0].employee.firstName} ${props.batches[0].employeeAssignments[0].employee.lastName}`;
     }
     else
     {
@@ -74,18 +74,18 @@ const BatchInformationPage: React.FC<IProps> = (props: IProps) => {
     /**
      * This function gets all of the batch data from our back end. This
      * includes data about each associate's test / quiz scores.
-     * 
+     *
      * @param batchId the batch id passed in from the batch card on the
      * home page
-     * 
+     *
      * @returns This function just changes the batch state to 
      */
-    const getBatchData = (batchId: string) => async (dispatch: any) => {
+    getBatchData = (batchId: string) => async () => {
 
         setSpinner(true);
         
         //array to place batch data into
-        let batchArray: IBatchState = {
+        const batchArray: IBatchState = {
             batches: [],
         };
 
@@ -93,13 +93,12 @@ const BatchInformationPage: React.FC<IProps> = (props: IProps) => {
         await axiosInstance().then((result) => {
             result.get("/client/batch/" + batchId)
             .then((response: any) => {
-                console.log(response.data);
+
 
                 if (response != null) {
                     const batchCardInfo = { ...response.data }
                     batchArray.batches.push(batchCardInfo);
 
-                    console.log(batchArray.batches[0]);
                     //the "batch state" is set to be whatever was extracted from the db
                     dispatch(setBatchState(batchArray));
 
@@ -107,7 +106,6 @@ const BatchInformationPage: React.FC<IProps> = (props: IProps) => {
                 setSpinner(false);
             })
             .catch((error: any) => {
-                console.log(error);
                 setSpinner(false);
             });
         })
@@ -122,7 +120,7 @@ const BatchInformationPage: React.FC<IProps> = (props: IProps) => {
         setRecievedData(true);
     };
 
-    if (hasData == false) {
+    if (hasData) {
         getBatchDataNow();
     }
 
@@ -130,9 +128,9 @@ const BatchInformationPage: React.FC<IProps> = (props: IProps) => {
         <>
             <Container style={{ minHeight: "100vh", maxWidth: "100vw", backgroundColor: "#E3E3E3" }}>
                 <NavBar>
-                    <Link to="/home">
+                    <a href="/home">
                         <DropdownItem>Return to Client Home</DropdownItem>
-                    </Link>
+                    </a>
                 </NavBar>
 
                 {/* Spinner displays below nav bar */}
@@ -165,3 +163,5 @@ const mapStateToProps = (store: any) => {
 };
 
 export default withRouter(connect<any>(mapStateToProps)(BatchInformationPage));
+
+export { BatchInformationPage }
