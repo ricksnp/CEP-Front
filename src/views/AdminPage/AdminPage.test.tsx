@@ -16,7 +16,7 @@ describe("AminPage", () => {
             <Provider store={store}>
                <AdminPage />
            </Provider>
-       );
+       )
     });
 
     it('should render with given state from Redux store', ()=>{

@@ -3,7 +3,7 @@ import { Auth } from "aws-amplify";
 import { IUserAdmin } from '../../_reducers/UserReducer';
 import Enzyme, { mount, shallow } from "enzyme";
 import { NewClientButton } from './NewClientButton';
-import { Button, Modal, Label, Input } from 'reactstrap';
+import { Button, Modal, Label, Input, Form } from 'reactstrap';
 import { store } from '../../Store';
 import { Provider } from 'react-redux';
 import { act, Simulate } from 'react-dom/test-utils';
@@ -111,6 +111,18 @@ test('should be 8 Labels', () => {
 test('should be 9 Inputs', () => {
     expect(wrapper.find(Input).length).toBe(8);
 })
+
+test('register user function should properly set constants', async () => {
+
+    const registerUserSpy = jest.spyOn(React, 'useState'); 
+    const form = wrapper.find(Form).at(0);
+    const children = form.render().children().children();
+    console.log(children);
+    form.simulate('submit', { target: { children } }); 
+    //wrapper.find(Form).simulate('submit');
+    expect(registerUserSpy).toBeCalled; //hoping simulate click triggers this
+})
+
 
 /**
  * This test verifies that constants are properly set when the form is filled
